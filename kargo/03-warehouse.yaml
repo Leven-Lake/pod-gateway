@@ -1,0 +1,21 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: sources
+  namespace: pod-gateway
+spec:
+  freightCreationPolicy: Automatic
+  interval: 5m0s
+  subscriptions:
+    - image:
+        discoveryLimit: 20
+        imageSelectionStrategy: SemVer
+        repoURL: ghcr.io/stefanprodan/podinfo
+        semverConstraint: ^6.5.0
+    - git:
+        commitSelectionStrategy: NewestFromBranch
+        discoveryLimit: 10
+        repoURL: https://github.com/Leven-Lake/pod-gateway.git    
+
+
+

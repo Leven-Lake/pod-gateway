@@ -14,4 +14,4 @@ patches:
     name: httproute
 images:
 - name: ghcr.io/stefanprodan/podinfo
-  newTag: 6.5.3
+  newTag: 6.7.0
