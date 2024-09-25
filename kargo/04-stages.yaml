@@ -1,0 +1,74 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: dev
+  namespace: pod-gateway
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: sources
+    sources:
+      direct: true
+  promotionMechanisms:
+    gitRepoUpdates:
+    - repoURL: https://github.com/Leven-Lake/pod-gateway.git
+      writeBranch: stage/dev
+      kustomize:
+        images:
+        - image: ghcr.io/stefanprodan/podinfo
+          path: stages/dev
+    argoCDAppUpdates:
+    - appName: pod-gateway-dev
+      appNamespace: argocd
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: staging
+  namespace: pod-gateway  
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: sources
+    sources:
+      stages:
+      - dev
+  promotionMechanisms:
+    gitRepoUpdates:
+    - repoURL: https://github.com/Leven-Lake/pod-gateway.git
+      writeBranch: stage/staging
+      kustomize:
+        images:
+        - image: ghcr.io/stefanprodan/podinfo
+          path: stages/staging
+    argoCDAppUpdates:
+    - appName: pod-gateway-staging
+      appNamespace: argocd
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod
+  namespace: pod-gateway
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: sources
+    sources:
+      stages:
+      - staging
+  promotionMechanisms:
+    gitRepoUpdates:
+    - repoURL: https://github.com/Leven-Lake/pod-gateway.git
+      writeBranch: stage/prod
+      kustomize:
+        images:
+        - image: ghcr.io/stefanprodan/podinfo
+          path: stages/prod
+    argoCDAppUpdates:
+    - appName: pod-gateway-prod
+      appNamespace: argocd            
+      

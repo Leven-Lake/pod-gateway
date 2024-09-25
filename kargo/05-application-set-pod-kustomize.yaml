@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: pod-gateway
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - stage: dev
+      - stage: staging 
+      - stage: prod
+  template:
+    metadata:
+      name: pod-gateway-{{stage}}
+      annotations:
+        kargo.akuity.io/authorized-stage: pod-gateway:{{stage}}
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Leven-Lake/pod-gateway.git
+        targetRevision: stage/{{stage}}
+        path: stages/{{stage}}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: pod-gateway-{{stage}}
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
